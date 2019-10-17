@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FullFirebase</string>
+    <string name="app_name">FirebaseApp</string>
     <string name="error_unknown_error">Erreur inconnue</string>
 
 
