@@ -18,9 +18,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dov.goforlunch.api.UserHelper
 import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.email_password.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -239,16 +242,34 @@ class EmailPasswordActivity : AppCompatActivity() {
         uploadTask.addOnSuccessListener {
             // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
             // ...
-              var pathImageSavedInFirebase = "" //it.getMetadata()?.getDownloadUrl().toString()
+            //  var pathImageSavedInFirebase = it.getMetadata()?.getDownloadUrl().toString()
                         // B - SAVE MESSAGE IN FIRESTORE
             //MessageHelper.createMessageWithImageForChat(pathImageSavedInFirebase, message, currentChatName, modelCurrentUser).addOnFailureListener(onFailureListener());
 
             //UserHelper.updateUserPicture(getCurrentUser()?.uid!!, pathImageSavedInFirebase)
 
-           UserHelper.updateUserPictureAndName(getCurrentUser()?.uid!!, pathImageSavedInFirebase, email.text.toString())
-
+           saveUser(mImageRef)
 
         }.addOnFailureListener(this.onFailureListener())
+    }
+
+    private fun saveUser(ref: StorageReference){
+       // var pathImageSavedInFirebase  = ref.downloadUrl.getResult().toString()
+
+        ref.downloadUrl.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+                UserHelper.updateUserPictureAndName(getCurrentUser()?.uid!!, downloadUri.toString(), email.text.toString())
+
+            } else {
+                // Handle failures
+                // ...
+            }
+        }
+
+
+
+
     }
 
     // --------------------
